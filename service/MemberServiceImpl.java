@@ -1,139 +1,189 @@
 package service;
+
 import bean.AdminBean;
 import bean.CustomerBean;
 import bean.MemberBean;
 
-public class MemberServiceImpl implements MemberService{
-	private MemberBean [] members;
-	private int count;
-	private CustomerBean [] customers;
-	private AdminBean [] admins;
-	String result = "";
+public class MemberServiceImpl implements MemberService {
+	private MemberBean[] members;
+	private CustomerBean[] customers;
+	private AdminBean[] admins;
 	
+	private int custCount,adminCount;
+
 	public MemberServiceImpl() {
-		members = new MemberBean[10];
-		count = 0;
+		customers = new CustomerBean[10];
+		admins = new AdminBean[10];
+		adminCount = 0;
+		custCount = 0;
 	}
-	
+
 	@Override
 	public void join(CustomerBean param) {
-		result = "회원가입성공";
-		members[count] = param;
-		count++;
-		return;
+		members[custCount] = param;
+		custCount++;
 	}
+
 	@Override
 	public CustomerBean[] findAllCustomers() {
-		members = new MemberBean[10];
-		for(int i =0; i<count;i++) {
-			members[i] = customers[i];
-		}
 		return customers;
 	}
+
 	@Override
 	public AdminBean[] findAllAdmins() {
-		members = new MemberBean[10];
-		for(int i =0; i<count;i++) {
-			members[i] = admins[i];
-		}
 		return admins;
 	}
+
 	@Override
 	public MemberBean[] findByName(String name) {
-		int j = 0;
-		for(int i = 0; i<count; i++) {
-			if(name.equals(this.members[i].getName())) {
-				j++;
+		int count1 = 0, count2 = 0, count3 = 0;
+		for(int i=0;i< custCount;i++) {
+			if(name.equals(customers[i].getName())) {
+				count1++;
+				break;
 			}
 		}
-		MemberBean[] members = new MemberBean[j];
-		j = 0 ;
-		for(int i = 0; i<count; i++) {
-			if(name.equals(this.members[i].getName())) {
-				members[j] = this.members[i];
+		for(int i=0;i< adminCount;i++) {
+			if(name.equals(admins[i].getName())) {
+				count2++;
+				break;
+			}
+		}
+		count3 = count1 + count2;
+		MemberBean[] members = new MemberBean[count3];
+		int j = 0;
+		for(int i=0;i< custCount;i++) {
+			if(name.equals(customers[i].getName())) {
+				members[j] = customers[i];
 				j++;
-				if(members.length==j) {
+				if(count1==j) {
 					break;
 				}
-			}members[i] = this.members[i];
+			}
+		}
+		int k = 0; 
+		for(int i=0;i< adminCount;i++) {
+			if(name.equals(admins[i].getName())) {
+				members[j] = admins[i];
+				k++;
+				j++;
+				if(count2==k) {
+					break;
+				}
+				break;
+			}
 		}
 		return members;
-	}
-	public String countAll() {
-		return String.valueOf(count+"명 입니다");
 	}
 
 	@Override
 	public MemberBean findById(String id) {
-		MemberBean member = new MemberBean();
-		for (int i = 0; i < count; i++) {
-			if(id.equals(members[i].getId())) {
-				member = members[i];
-			}break;
+		MemberBean c = new MemberBean();
+		for (int i=0;i<custCount;i++) {
+			if(id.equals(customers[i].getId())) {
+				c=admins[i];
+				break;
+			}
 		}
-		return member;
+		for(int i=0;i<adminCount;i++) {
+			if(id.equals(admins[i].getId())) {
+				c=admins[i];
+				break;
+				}
+		}
+		return c;
+	}
+
+	@Override 
+	public boolean login(MemberBean param) { 
+//		return findById(param.getId()).equals(param.getPass()); 한줄로가능
+		boolean flag = false;
+		if(findById(param.getId()).equals(param.getPass())) {
+			flag = true;
+		}
+		return flag;
 	}
 
 	@Override
-	public boolean login(MemberBean param) {
-		boolean msg = false;
-		for(int i = 0; i<count; i++) {
-			if(param.getId().equals(members[i].getId())
-					&&(param.getPass().equals(members[i].getPass()))){
-				msg=true;
-			break;
-			}		
-		}
-		return msg;
-	}
-
-	@Override
-	public int countCustomers() {
-		// TODO Auto-generated method stub
-		return 0;
+	public int countMembers() {
+		return custCount;
 	}
 
 	@Override
 	public int countAdmins() {
-		// TODO Auto-generated method stub
-		return 0;
+		return adminCount;
+	
 	}
 
 	@Override
-	public String existId(String id) {
-		result = "가입가능 ID 입니다";
-		// 가입가능한 아이디 입니다.
-		for(int i =0; i<count;i++) {
-			if(id.equals(members[i].getId())) {
-				result = "이미 존재하는 ID 입니다";
+	public boolean existId(String id) {
+		boolean flag = false;
+		for (int i=0;i<custCount;i++) {
+			if(id.equals(customers[i].getId())) {
+				flag= true;
 				break;
+				}
 			}
+		for(int i=0;i<adminCount;i++) {
+			if(id.equals(admins[i].getId())) {
+				flag= true;
+				break;}
 		}
-		return result;
+		return flag ;
 	}
 
 	@Override
-	public String updatePass(MemberBean param) {
-		result = "비밀번호가 변경 되었습니다";
+	public void updatePass(MemberBean param) {
 		String id = param.getId();
-		String pass = param.getPass();
-		
-		String [] newPass =pass.split(",");
+		String [] newPass =param.getPass().split(",");
 		String oldPass = newPass[0];
 		String nP = newPass[1];
-		for(int i = 0; i<count;i++) {
-			if(param.getId().equals(members[i].getId())
-					&&(oldPass.equals(members[i].getPass()))){
-				members[i].setPass(nP);
-				break;
+		param.setPass(oldPass);
+		if(login(param)) {
+			for(int i=0;i< custCount;i++) {
+				if(id.equals(customers[i].getId())) {
+					customers[i].setPass(nP);;
+					break;
+				}
 			}
-	}return result;
+			for(int i=0;i< adminCount;i++) {
+				if(id.equals(admins[i].getId())) {
+					admins[i].setPass(nP);
+					break;
+				}
+			}
+		}
 	}
 
 	@Override
 	public void deleteMember(MemberBean param) {
-		// TODO Auto-generated method stub
+		if(login(param)) {
+			int i = 0;
+			for(;i<custCount;i++) {
+			if(customers[i].getId().equals(param.getId())) {
+				customers[i] = customers[custCount-1];
+				custCount--;
+				break;
+			}
+			}
+			i=0;
+			for(;i<adminCount;i++) {
+				if(admins[i].getId().equals(param.getId())) {
+					admins[i] = admins[adminCount-1];
+					adminCount--;
+					break;}
+			}
+			}
+		}
+		
+		
+	
+
+	@Override
+	public void register(MemberBean param) {
+
+		
 		
 	}
-	
+
 }

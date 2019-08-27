@@ -18,8 +18,8 @@ package bean;
  * void deleteMember(MemberBean param);
  * */
 public class AccountBean {
-	private String today;
-	private int accountNum, money;
+	private String today,accountNum;
+	int money;
 
 	public void setToday(String today) {
 		this.today = today;
@@ -29,11 +29,11 @@ public class AccountBean {
 		return this.today;
 	}
 
-	public void setAccountNum(int accountNum) {
+	public void setAccountNum(String accountNum) {
 		this.accountNum = accountNum;
 	}
 
-	public int getAccountNum() {
+	public String getAccountNum() {
 		return this.accountNum;
 	}
 
@@ -46,7 +46,7 @@ public class AccountBean {
 	}
 
 	public String toString() {
-		return String.format("[계좌정보]\n" + "거래일 : %s" + "계좌번호 : %d" + "잔액 : %d", today, accountNum, money);
+		return " 계좌정보 [ 계좌번호 =" + accountNum + ", 거래일 =" + today + ", 잔액=" + money +"]";
 
 	}
 }
