@@ -85,7 +85,9 @@ public class UserController {
 				JOptionPane.showMessageDialog(null, service.countAdmins());
 				break;
 			case "10" :
-				
+				String id = JOptionPane.showInputDialog("ID중복체크");
+				JOptionPane.showMessageDialog(null, service.existId(id));
+				break;
 			
 			case "11" :
 				String delete = JOptionPane.showInputDialog("탈퇴할 Id,Pass 입력");
